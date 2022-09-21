@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import { json } from 'body-parser';
 
 class App {
     public app: Express;
@@ -9,9 +10,13 @@ class App {
         this.app = express();
         this.port = port;
 
-        this.initializeControllers(controllers)
+        this.initializeMiddlewares();
+        this.initializeControllers(controllers);
     }
 
+    private initializeMiddlewares() {
+        this.app.use(json());
+    }
     // TODO: Create controller interface class to replace any
     private initializeControllers(controllers: Array<any>) {
         controllers.forEach((controller: any) => {

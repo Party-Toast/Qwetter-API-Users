@@ -1,5 +1,4 @@
-export interface User {
-    id: Number;
+export interface BaseUser {
     roles: Array<String>;
     firstName: String;
     lastName: String;
@@ -10,4 +9,6 @@ export interface User {
     website: String;
 }
 
-export default User;
+export interface User extends BaseUser {
+    id: Number;
+}
