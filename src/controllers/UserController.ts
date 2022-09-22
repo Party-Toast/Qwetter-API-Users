@@ -1,10 +1,37 @@
+import { JSONSchemaType } from 'ajv';
 import { Router, Request, Response } from 'express';
-import { User } from '../models/User';
+import { BaseUser, User } from '../models/User';
 import { createUser, getAllUsers } from '../services/UserService'
+import SchemaValidator from '../utils/SchemaValidator';
 
 class UserController {
     public path = '/users';
     public router = Router();
+    public validator = new SchemaValidator();
+    public schema: JSONSchemaType<BaseUser> = {
+        type: "object",
+        properties: {
+            username: {type: 'string'},
+            // roles: {type: 'array'},
+            firstName: {type: 'string'},
+            lastName: {type: 'string'},
+            avatar: {type: 'string'},
+            bio: {type: 'string'},
+            location: {type: 'string'},
+            website: {type: 'string'}
+        },
+        required: [
+            "username",
+            // "roles",
+            "firstName",
+            "lastName",
+            "avatar",
+            "bio",
+            "location",
+            "website"
+        ],
+        additionalProperties: false
+    }
 
     constructor() {
         this.intializeRoutes();
@@ -12,7 +39,7 @@ class UserController {
 
     public intializeRoutes() {
         this.router.get(this.path, this.getAllUsers);
-        this.router.post(this.path, this.createUser);
+        this.router.post(this.path, this.validator.validateBody(this.schema), this.createUser);
     }
 
     getAllUsers = async (request: Request, response: Response) => {

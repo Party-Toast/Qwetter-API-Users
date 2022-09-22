@@ -1,4 +1,4 @@
-import App from './app';
+import App from './App';
 import dotenv from 'dotenv';
 import UserController from './controllers/UserController';
 

@@ -1,12 +1,12 @@
 export interface BaseUser {
-    username: String;
-    roles: Array<String>;
-    firstName: String;
-    lastName: String;
-    avatar: String;
-    bio: String;
-    location: String;
-    website: String;
+    username: string;
+    // roles: string[];
+    firstName: string;
+    lastName: string;
+    avatar: string;
+    bio: string;
+    location: string;
+    website: string;
 }
 
 export interface User extends BaseUser {
