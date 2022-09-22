@@ -1,8 +1,8 @@
 export interface BaseUser {
+    username: String;
     roles: Array<String>;
     firstName: String;
     lastName: String;
-    username: String;
     avatar: String;
     bio: String;
     location: String;

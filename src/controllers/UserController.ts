@@ -16,12 +16,19 @@ class UserController {
     }
 
     getAllUsers = async (request: Request, response: Response) => {
-        getAllUsers().then((users) => response.send(users));
+        getAllUsers().then((users) => {
+            response.send(users);
+        });
     }
-
+    
+    // TODO: type validation    
     createUser = async (request: Request, response: Response) => {
         const user: User = request.body;
-        createUser(user).then((user) => response.send(user))
+        createUser(user).then((user) => {
+            // TODO: statuscode not working
+            response.statusCode = 201;
+            response.send(user);
+        });
     }
 }
 
