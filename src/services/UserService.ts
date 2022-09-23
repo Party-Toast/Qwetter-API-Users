@@ -3,7 +3,7 @@ import { BaseUser, User } from "../models/User";
 const users: Array<User> = [
     {
         id: 1,
-        // roles: ['ADMIN'],
+        roles: ['ADMIN'],
         firstName: 'John',
         lastName: 'Doe',
         username: 'JDoe',

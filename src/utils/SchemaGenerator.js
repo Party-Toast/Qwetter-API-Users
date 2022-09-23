@@ -11,10 +11,18 @@ const compilerOptions = {
   strictNullChecks: true,
 };
 
-const program = tjs.getProgramFromFiles([path.resolve("schema_definition.ts")], compilerOptions, "./");
+const modelFileNames = fs.readdirSync("src/models");
 
-const schema = tjs.generateSchema(program, "*", settings);
-fs.writeFileSync(
-  "_schema.ts",
-  "const schema = " + JSON.stringify(schema) + " as const;\nexport default schema.definitions;"
-);
+modelFileNames.forEach(modelFileName => {
+  const program = tjs.getProgramFromFiles([path.resolve(`src/models/${modelFileName}`)], compilerOptions, "./");
+  const schema = tjs.generateSchema(program, "*", settings);
+
+  for (const [key, value] of Object.entries(schema.definitions)) {
+    fs.writeFileSync(
+      `src/schemas/${key}Schema.ts`,
+      `const schema = ${JSON.stringify(value, null, 4)} as const;\nexport default schema;`
+    );
+  }
+})
+
+

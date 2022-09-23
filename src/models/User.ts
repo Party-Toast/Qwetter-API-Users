@@ -1,6 +1,6 @@
 export interface BaseUser {
     username: string;
-    // roles: string[];
+    roles: string[];
     firstName: string;
     lastName: string;
     avatar: string;
