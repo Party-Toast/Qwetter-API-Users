@@ -7,6 +7,7 @@
     "build": "npx tsc",
     "start": "node dist/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
+    "schema": "node ./src/utils/schemaGenerator.js",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'"
   },
   "keywords": [],
@@ -16,7 +17,8 @@
     "ajv": "^8.11.0",
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.2",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "typescript-json-schema": "^0.54.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.3",

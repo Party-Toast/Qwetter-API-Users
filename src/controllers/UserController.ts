@@ -8,29 +8,18 @@ class UserController {
     public path = '/users';
     public router = Router();
     public validator = new SchemaValidator();
-    public schema: JSONSchemaType<BaseUser> = {
-        type: "object",
-        properties: {
-            username: {type: 'string'},
-            // roles: {type: 'array'},
-            firstName: {type: 'string'},
-            lastName: {type: 'string'},
-            avatar: {type: 'string'},
-            bio: {type: 'string'},
-            location: {type: 'string'},
-            website: {type: 'string'}
-        },
-        required: [
-            "username",
-            // "roles",
-            "firstName",
-            "lastName",
-            "avatar",
-            "bio",
-            "location",
-            "website"
-        ],
-        additionalProperties: false
+    public schema: JSONSchemaType<BaseUser> = { 
+        "type": "object", 
+        "properties": { 
+            "username": { "type": "string" }, 
+            "firstName": { "type": "string" }, 
+            "lastName": { "type": "string" }, 
+            "avatar": { "type": "string" }, 
+            "bio": { "type": "string" }, 
+            "location": { "type": "string" }, 
+            "website": { "type": "string" } 
+        }, 
+        "required": ["avatar", "bio", "firstName", "lastName", "location", "username", "website"] 
     }
 
     constructor() {
