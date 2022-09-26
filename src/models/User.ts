@@ -10,5 +10,5 @@ export interface BaseUser {
 }
 
 export interface User extends BaseUser {
-    id: Number;
+    uuid: number;
 }
