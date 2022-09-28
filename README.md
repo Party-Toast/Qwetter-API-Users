@@ -11,8 +11,10 @@ Run `npm install` to install required dependencies.
 
 | Script | Use  |  
 | --- | --- |
-| `npm run build` | Build for production |
-| `npm run start` | Run application |
-| `npm run dev`   | Run development server  |
-| `npm run test`  | Run tests (Mocha)  |
-| `npm run shema` | Generate schemas for the models (required for API type validation)  |
+| `npm run build`           | Build for production |
+| `npm run start`           | Run application |
+| `npm run dev`             | Run development server  |
+| `npm run test`            | Run tests (Mocha)  |
+| `npm run shema`           | Generate schemas for the models (required for API type validation)  |
+| `npm run docker-build`    | Build docker image as "qwetter-api"  |
+| `npm run docker-run`      | Deploy docker image in local container  |
