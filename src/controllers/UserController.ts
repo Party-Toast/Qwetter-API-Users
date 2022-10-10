@@ -33,7 +33,7 @@ class UserController {
         const uuid: number = parseInt(request.params.uuid);
         getUserById(uuid).then((user) => {
             if(user === undefined) {
-                response.status(404).send(`No user with id ${uuid} was found.`)
+                response.status(404).send(`No user with uuid ${uuid} was found.`)
             }
             response.send(user)
         })
@@ -51,7 +51,7 @@ class UserController {
         const baseUser: BaseUser = request.body;
         updateUser(uuid, baseUser).then((user) => {
             if(user === undefined) {
-                response.status(404).send(`No user with id ${uuid} was found.`);
+                response.status(404).send(`No user with uuid ${uuid} was found.`);
             }
             response.send(user);
         })
@@ -61,7 +61,7 @@ class UserController {
         const uuid: number = parseInt(request.params.uuid);
         deleteUser(uuid).then((user) => {
             if(user === undefined) {
-                response.status(404).send(`No user with id ${uuid} was found.`);
+                response.status(404).send(`No user with uuid ${uuid} was found.`);
             }
             response.send(user);
         })
