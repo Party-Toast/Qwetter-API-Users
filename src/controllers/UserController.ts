@@ -1,15 +1,16 @@
 import { JSONSchemaType } from 'ajv';
 import { Router, Request, Response } from 'express';
-import { BaseUser, User } from '../models/User';
-import { createUser, deleteUser, getAllUsers, getUserById, updateUser } from '../services/UserService'
+import { User, UserCreationRequest, UserUpdateRequest } from '../models/User';
+import UserService from '../services/UserService';
 import SchemaValidator from '../utils/SchemaValidator';
-import BaseUserSchema from '../schemas/BaseUserSchema';
+import UserCreationRequestSchema from '../schemas/UserCreationRequestSchema';
 
 class UserController {
     public path = '/users';
     public router = Router();
     public validator = new SchemaValidator();
-    public baseUserSchema: JSONSchemaType<BaseUser> = BaseUserSchema;
+    public userCreationRequestSchema: JSONSchemaType<UserCreationRequest> = UserCreationRequestSchema;
+    public userService = new UserService();
 
     constructor() {
         this.intializeRoutes();
@@ -18,20 +19,21 @@ class UserController {
     public intializeRoutes() {
         this.router.get(this.path, this.getAllUsers);
         this.router.get(`${this.path}/:uuid`, this.getUserByUuid);
-        this.router.post(this.path, this.validator.validateBody(this.baseUserSchema), this.createUser);
-        this.router.put(`${this.path}/:uuid`, this.validator.validateBody(this.baseUserSchema), this.updateUser);
+        this.router.post(this.path, this.validator.validateBody(this.userCreationRequestSchema), this.createUser);
+        this.router.put(`${this.path}/:uuid`, this.validator.validateBody(this.userCreationRequestSchema), this.updateUser);
         this.router.delete(`${this.path}/:uuid`, this.deleteUser);
     }
-
+    
+    // GET
     getAllUsers = async (request: Request, response: Response) => {
-        getAllUsers().then((users) => {
+        this.userService.getAllUsers().then((users) => {
             response.send(users);
         });
     }
 
     getUserByUuid = async (request: Request, response: Response) => {
         const uuid: number = parseInt(request.params.uuid);
-        getUserById(uuid).then((user) => {
+        this.userService.getUserById(uuid).then((user) => {
             if(user === undefined) {
                 response.status(404).send(`No user with uuid ${uuid} was found.`)
             }
@@ -39,17 +41,20 @@ class UserController {
         })
     }
     
+    // POST
     createUser = async (request: Request, response: Response) => {
-        const baseUser: BaseUser = request.body;
-        createUser(baseUser).then((user) => {
+        const userCreationRequest: UserCreationRequest = request.body;
+        this.userService.createUser(userCreationRequest).then((user) => {
+            // TODO: catch responses for duplicate username/email registration
             response.status(201).send(user);
         });
     }
 
+    // PUT
     updateUser = async (request: Request, response: Response) => {
         const uuid: number = parseInt(request.params.uuid);
-        const baseUser: BaseUser = request.body;
-        updateUser(uuid, baseUser).then((user) => {
+        const userUpdateRequest: UserUpdateRequest = request.body;
+        this.userService.updateUser(uuid, userUpdateRequest).then((user) => {
             if(user === undefined) {
                 response.status(404).send(`No user with uuid ${uuid} was found.`);
             }
@@ -57,11 +62,12 @@ class UserController {
         })
     }
 
+    // DELETE
     deleteUser = async (request: Request, response: Response) => {
         const uuid: number = parseInt(request.params.uuid);
-        deleteUser(uuid).then((user) => {
+        this.userService.deleteUser(uuid).then((user) => {
             if(user === undefined) {
-                response.status(404).send(`No user with uuid ${uuid} was found.`);
+                response.status(204).send();
             }
             response.send(user);
         })
