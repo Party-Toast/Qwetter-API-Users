@@ -25,16 +25,16 @@ const users: Array<User> = [
     },
 ]
 
-class UserService {
-    public getAllUsers = async (): Promise<Array<User>> => {
+export default abstract class UserService {
+    static getAllUsers = async (): Promise<Array<User>> => {
         return users;
     };
     
-    getUserById = async(uuid: number): Promise<User | undefined> => {
+    static getUserById = async(uuid: number): Promise<User | undefined> => {
         return users.find(user => user.uuid === uuid);
     };
 
-    createUser = async(user: UserCreationRequest): Promise<User> => {
+    static createUser = async(user: UserCreationRequest): Promise<User> => {
         // TODO: improve UUID generation
         // TODO: unique email/username check
         const nextUuid = users.length;
@@ -53,7 +53,7 @@ class UserService {
         return newUser;
     };  
 
-    updateUser = async(uuid: number, user: UserUpdateRequest): Promise<User | undefined> => { 
+    static updateUser = async(uuid: number, user: UserUpdateRequest): Promise<User | undefined> => { 
         const index = users.findIndex(user => user.uuid === uuid);
         if(index == -1) {
             return undefined;
@@ -70,7 +70,7 @@ class UserService {
         return users[index];
     };
 
-    deleteUser = async(uuid: number): Promise<User | undefined> => {
+    static deleteUser = async(uuid: number): Promise<User | undefined> => {
         const index = users.findIndex(user => user.uuid === uuid);
         if(index == -1) {
             return undefined;
@@ -80,5 +80,3 @@ class UserService {
         return user;    
     };
 }
-
-export default UserService;
