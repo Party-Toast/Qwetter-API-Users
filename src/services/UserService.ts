@@ -1,4 +1,4 @@
-import UserSQLDatabaseConnection from "../repositories/UserSQLDatabaseConnection";
+import UserSQLDatabaseConnection from "../repositories/SQLUserDatabaseConnection";
 import { User, UserCreationRequest, UserUpdateRequest } from "../models/User";
 
 export default class UserService {

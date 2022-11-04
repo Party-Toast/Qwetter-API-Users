@@ -1,10 +1,10 @@
 import { User, UserCreationRequest, UserUpdateRequest } from "../models/User";
-import IDatabaseConnection from "./IDatabaseConnection";
+import IDatabaseConnection from "./IUserDatabaseConnection";
+import mysql from 'mysql';
 
 const users: Array<User> = [
     {
         uuid: 0,
-        roles: ['ADMIN'],
         firstName: 'db connection test',
         lastName: 'Doe',
         username: 'JDoe',
@@ -15,7 +15,6 @@ const users: Array<User> = [
     },
     {
         uuid: 1,
-        roles: ['ADMIN'],
         firstName: 'Sytse',
         lastName: 'Walraven',
         username: 'SytseWalraven',
@@ -27,9 +26,30 @@ const users: Array<User> = [
 ]
 
 export default class UserSQLDatabaseConnection implements IDatabaseConnection {
-    // TODO: Add MySQL database connection
+    public connection;
+
+    constructor() {
+        this.connection = mysql.createConnection({
+            host: process.env.MYSQL_HOST,
+            user: process.env.MYSQL_USER,
+            password: process.env.MYSQL_PASSWORD,
+            database: process.env.MYSQL_DATABASE
+        });
+    }
+
+    // TODO: implement try-catch-finally
+    private executeQuery = async(query: string) => {
+        this.connection.connect();
+        this.connection.query(query, (err, rows, fields) => {
+            if (err) throw err
+          
+            console.log(rows)
+          })
+        this.connection.end();
+    }
 
     public getAllUsers = async(): Promise<User[]> => {
+        this.executeQuery("SELECT * FROM `users`");
         return users;
     }
 
@@ -48,7 +68,6 @@ export default class UserSQLDatabaseConnection implements IDatabaseConnection {
             firstName: user.firstName,
             lastName: user.lastName,
             location: user.location,
-            roles: user.roles,
             username: user.username,
             website: user.website
         }
@@ -66,7 +85,6 @@ export default class UserSQLDatabaseConnection implements IDatabaseConnection {
         users[index].firstName = user.firstName;
         users[index].lastName = user.lastName;
         users[index].location = user.location;
-        users[index].roles = user.roles;
         users[index].username = user.username;
         users[index].website = user.website;
     

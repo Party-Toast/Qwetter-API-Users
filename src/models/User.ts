@@ -1,6 +1,5 @@
 export interface User {
     uuid: number;
-    roles: string[];
     username: string;
     firstName: string;
     lastName: string;
@@ -12,7 +11,6 @@ export interface User {
 
 export interface UserCreationRequest {
     username: string;
-    roles: string[];
     firstName: string;
     lastName: string;
     avatar: string;
@@ -23,7 +21,6 @@ export interface UserCreationRequest {
 
 export interface UserUpdateRequest {
     username: string;
-    roles: string[];
     firstName: string;
     lastName: string;
     avatar: string;

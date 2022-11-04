@@ -4,12 +4,6 @@ const schema = {
         "uuid": {
             "type": "number"
         },
-        "roles": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            }
-        },
         "username": {
             "type": "string"
         },
@@ -38,7 +32,6 @@ const schema = {
         "firstName",
         "lastName",
         "location",
-        "roles",
         "username",
         "uuid",
         "website"
