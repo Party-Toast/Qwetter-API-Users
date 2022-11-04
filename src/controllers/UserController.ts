@@ -9,12 +9,14 @@ import UserUpdateRequestSchema from '../schemas/UserUpdateRequestSchema';
 class UserController {
     public path = '/users';
     public router = Router();
+    public userService: UserService;
     public validator = new SchemaValidator();
     public userCreationRequestSchema: JSONSchemaType<UserCreationRequest> = UserCreationRequestSchema;
     public userUpdateRequestSchema: JSONSchemaType<UserUpdateRequest> = UserUpdateRequestSchema;
 
     constructor() {
         this.intializeRoutes();
+        this.userService = new UserService();
     }
 
     public intializeRoutes() {
@@ -26,15 +28,15 @@ class UserController {
     }
     
     // GET
-    getAllUsers = async (request: Request, response: Response) => {
-        UserService.getAllUsers().then((users) => {
+    public getAllUsers = async (request: Request, response: Response) => {
+        this.userService.getAllUsers().then((users) => {
             response.send(users);
         });
     }
 
-    getUserByUuid = async (request: Request, response: Response) => {
+    public getUserByUuid = async (request: Request, response: Response) => {
         const uuid: number = parseInt(request.params.uuid);
-        UserService.getUserById(uuid).then((user) => {
+        this.userService.getUserById(uuid).then((user) => {
             if(user === undefined) {
                 response.status(404).send(`No user with uuid ${uuid} was found.`)
             }
@@ -43,19 +45,19 @@ class UserController {
     }
     
     // POST
-    createUser = async (request: Request, response: Response) => {
+    public createUser = async (request: Request, response: Response) => {
         const userCreationRequest: UserCreationRequest = request.body;
-        UserService.createUser(userCreationRequest).then((user) => {
+        this.userService.createUser(userCreationRequest).then((user) => {
             // TODO: catch responses for duplicate username/email registration
             response.status(201).send(user);
         });
     }
 
     // PUT
-    updateUser = async (request: Request, response: Response) => {
+    public updateUser = async (request: Request, response: Response) => {
         const uuid: number = parseInt(request.params.uuid);
         const userUpdateRequest: UserUpdateRequest = request.body;
-        UserService.updateUser(uuid, userUpdateRequest).then((user) => {
+        this.userService.updateUser(uuid, userUpdateRequest).then((user) => {
             if(user === undefined) {
                 response.status(404).send(`No user with uuid ${uuid} was found.`);
             }
@@ -64,11 +66,11 @@ class UserController {
     }
 
     // DELETE
-    deleteUser = async (request: Request, response: Response) => {
+    public deleteUser = async (request: Request, response: Response) => {
         const uuid: number = parseInt(request.params.uuid);
-        UserService.deleteUser(uuid).then((user) => {
+        this.userService.deleteUser(uuid).then((user) => {
             if(user === undefined) {
-                response.status(204).send();
+                response.status(204);
             }
             response.send(user);
         })
