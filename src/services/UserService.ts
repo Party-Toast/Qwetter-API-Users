@@ -1,11 +1,11 @@
-import UserSQLDatabaseConnection from "../repositories/SQLUserDatabaseConnection";
+import MySQLUserDatabaseConnection from "../repositories/MySQLUserDatabaseConnection";
 import { User, UserCreationRequest, UserUpdateRequest } from "../models/User";
 
 export default class UserService {
-    public databaseConnection: UserSQLDatabaseConnection;
+    public databaseConnection: MySQLUserDatabaseConnection;
 
     constructor() {
-        this.databaseConnection = new UserSQLDatabaseConnection();
+        this.databaseConnection = new MySQLUserDatabaseConnection();
     }
 
     public getAllUsers = async (): Promise<Array<User>> => {

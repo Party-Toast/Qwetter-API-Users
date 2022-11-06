@@ -25,7 +25,7 @@ const users: Array<User> = [
     },
 ]
 
-export default class UserSQLDatabaseConnection implements IDatabaseConnection {
+export default class MySQLUserDatabaseConnection implements IDatabaseConnection {
     public connection;
 
     constructor() {
@@ -37,25 +37,28 @@ export default class UserSQLDatabaseConnection implements IDatabaseConnection {
         });
     }
 
-    // TODO: implement try-catch-finally
-    private executeQuery = async(query: string) => {
-        this.connection.connect();
-        this.connection.query(query, (err, rows, fields) => {
-            if (err) throw err
-          
-            console.log(rows)
-          })
-        this.connection.end();
+    private executeQuery = async(query: string):  Promise<any> => {
+        try {
+            this.connection.query(query, (err, rows, fields) => {
+                if (err) {
+                    throw err;
+                }
+                return rows;
+            })
+        }
+        catch(e) {
+            throw e;
+        }
     }
 
-    public getAllUsers = async(): Promise<User[]> => {
-        this.executeQuery("SELECT * FROM `users`");
+    // TODO: implement MySQL queries
+    public getAllUsers = async (): Promise<User[]> => {
         return users;
     }
 
     public getUserById = async (uuid: number): Promise<User | undefined> => {
         return users.find(user => user.uuid === uuid);
-    };
+    }
 
     public createUser = async (user: UserCreationRequest): Promise<User> => {
         // TODO: improve UUID generation
@@ -73,7 +76,7 @@ export default class UserSQLDatabaseConnection implements IDatabaseConnection {
         }
         users.push(newUser);
         return newUser;
-    };  
+    } 
 
     public updateUser = async (uuid: number, user: UserUpdateRequest): Promise<User | undefined> => { 
         const index = users.findIndex(user => user.uuid === uuid);
@@ -89,7 +92,7 @@ export default class UserSQLDatabaseConnection implements IDatabaseConnection {
         users[index].website = user.website;
     
         return users[index];
-    };
+    }
 
     public deleteUser = async (uuid: number): Promise<User | undefined> => {
         const index = users.findIndex(user => user.uuid === uuid);
@@ -99,5 +102,5 @@ export default class UserSQLDatabaseConnection implements IDatabaseConnection {
         const user = users[index];
         users.splice(index, 1);
         return user;    
-    };
+    }
 }

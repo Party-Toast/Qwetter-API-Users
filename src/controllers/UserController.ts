@@ -6,7 +6,7 @@ import SchemaValidator from '../utils/SchemaValidator';
 import UserCreationRequestSchema from '../schemas/UserCreationRequestSchema';
 import UserUpdateRequestSchema from '../schemas/UserUpdateRequestSchema';
 
-class UserController {
+export default class UserController {
     public path = '/users';
     public router = Router();
     public userService: UserService;
@@ -23,7 +23,7 @@ class UserController {
         this.router.get(this.path, this.getAllUsers);
         this.router.get(`${this.path}/:uuid`, this.getUserByUuid);
         this.router.post(this.path, this.validator.validateBody(this.userCreationRequestSchema), this.createUser);
-        this.router.put(`${this.path}/:uuid`, this.validator.validateBody(this.userCreationRequestSchema), this.updateUser);
+        this.router.put(`${this.path}/:uuid`, this.validator.validateBody(this.userUpdateRequestSchema), this.updateUser);
         this.router.delete(`${this.path}/:uuid`, this.deleteUser);
     }
     
@@ -40,7 +40,7 @@ class UserController {
             if(user === undefined) {
                 response.status(404).send(`No user with uuid ${uuid} was found.`)
             }
-            response.send(user)
+            response.send(user);
         })
     }
     
@@ -76,5 +76,3 @@ class UserController {
         })
     }
 }
-
-export default UserController;

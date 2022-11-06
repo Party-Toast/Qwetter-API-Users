@@ -5,7 +5,7 @@ describe('User controller', () => {
     it('Path matches', () => {
         const userController = new UserController(); 
         expect(userController.path).to.equal('/users'); 
-    });
+    })
 })
 describe('User service', () => {
     
