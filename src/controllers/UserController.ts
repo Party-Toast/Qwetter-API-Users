@@ -21,7 +21,7 @@ export default class UserController {
 
     public intializeRoutes() {
         this.router.get(this.path, this.getAllUsers);
-        this.router.get(`${this.path}/:uuid`, this.getUserByUuid);
+        this.router.get(`${this.path}/:uuid`, this.getUserById);
         this.router.post(this.path, this.validator.validateBody(this.userCreationRequestSchema), this.createUser);
         this.router.put(`${this.path}/:uuid`, this.validator.validateBody(this.userUpdateRequestSchema), this.updateUser);
         this.router.delete(`${this.path}/:uuid`, this.deleteUser);
@@ -34,7 +34,7 @@ export default class UserController {
         });
     }
 
-    public getUserByUuid = async (request: Request, response: Response) => {
+    public getUserById = async (request: Request, response: Response) => {
         const uuid: number = parseInt(request.params.uuid);
         this.userService.getUserById(uuid).then((user) => {
             if(user === undefined) {
