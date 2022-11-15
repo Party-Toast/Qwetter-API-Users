@@ -12,7 +12,7 @@ export default class UserService {
         return this.databaseConnection.getAllUsers();
     };
     
-    public getUserById = async (uuid: number): Promise<User | undefined> => {
+    public getUserById = async (uuid: string): Promise<User | undefined> => {
         return this.databaseConnection.getUserById(uuid);
     };
 
@@ -20,11 +20,11 @@ export default class UserService {
         return this.databaseConnection.createUser(user);
     };  
 
-    public updateUser = async (uuid: number, user: UserUpdateRequest): Promise<User | undefined> => { 
+    public updateUser = async (uuid: string, user: UserUpdateRequest): Promise<User | undefined> => { 
         return this.databaseConnection.updateUser(uuid, user);
     };
 
-    public deleteUser = async (uuid: number): Promise<User | undefined> => {
+    public deleteUser = async (uuid: string): Promise<User | undefined> => {
         return this.databaseConnection.deleteUser(uuid);  
     };
 }

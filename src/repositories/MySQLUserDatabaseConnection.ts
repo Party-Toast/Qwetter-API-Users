@@ -4,7 +4,7 @@ import mysql from 'mysql';
 
 const users: Array<User> = [
     {
-        uuid: 0,
+        uuid: '0',
         firstName: 'db connection test',
         lastName: 'Doe',
         username: 'JDoe',
@@ -14,7 +14,7 @@ const users: Array<User> = [
         website: "johndoe.com"
     },
     {
-        uuid: 1,
+        uuid: '1',
         firstName: 'Sytse',
         lastName: 'Walraven',
         username: 'SytseWalraven',
@@ -56,14 +56,14 @@ export default class MySQLUserDatabaseConnection implements IDatabaseConnection 
         return users;
     }
 
-    public getUserById = async (uuid: number): Promise<User | undefined> => {
+    public getUserById = async (uuid: string): Promise<User | undefined> => {
         return users.find(user => user.uuid === uuid);
     }
 
     public createUser = async (user: UserCreationRequest): Promise<User> => {
         // TODO: improve UUID generation
         // TODO: unique email/username check
-        const nextUuid = users.length;
+        const nextUuid = users.length.toString();
         const newUser: User = {
             uuid: nextUuid,
             avatar: user.avatar,
@@ -78,7 +78,7 @@ export default class MySQLUserDatabaseConnection implements IDatabaseConnection 
         return newUser;
     } 
 
-    public updateUser = async (uuid: number, user: UserUpdateRequest): Promise<User | undefined> => { 
+    public updateUser = async (uuid: string, user: UserUpdateRequest): Promise<User | undefined> => { 
         const index = users.findIndex(user => user.uuid === uuid);
         if(index == -1) {
             return undefined;
@@ -94,7 +94,7 @@ export default class MySQLUserDatabaseConnection implements IDatabaseConnection 
         return users[index];
     }
 
-    public deleteUser = async (uuid: number): Promise<User | undefined> => {
+    public deleteUser = async (uuid: string): Promise<User | undefined> => {
         const index = users.findIndex(user => user.uuid === uuid);
         if(index == -1) {
             return undefined;

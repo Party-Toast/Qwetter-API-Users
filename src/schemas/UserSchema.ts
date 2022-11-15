@@ -2,7 +2,7 @@ const schema = {
     "type": "object",
     "properties": {
         "uuid": {
-            "type": "number"
+            "type": "string"
         },
         "username": {
             "type": "string"
