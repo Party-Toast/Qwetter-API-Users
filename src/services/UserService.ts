@@ -1,11 +1,12 @@
 import MySQLUserDatabaseConnection from "../repositories/MySQLUserDatabaseConnection";
+import Neo4JUserDatabaseConnection from "../repositories/Neo4JUserDatabaseConnection";
 import { User, UserCreationRequest, UserUpdateRequest } from "../models/User";
 
 export default class UserService {
-    public databaseConnection: MySQLUserDatabaseConnection;
+    public databaseConnection;
 
     constructor() {
-        this.databaseConnection = new MySQLUserDatabaseConnection();
+        this.databaseConnection = new Neo4JUserDatabaseConnection();
     }
 
     public getAllUsers = async (): Promise<Array<User>> => {
