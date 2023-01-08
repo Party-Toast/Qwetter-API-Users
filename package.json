@@ -10,7 +10,7 @@
     "schema": "node ./src/utils/schemaGenerator.js",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
     "docker-build": "docker build -t qwetter-api-users .",
-    "docker-run": "docker run -p 3000:3000 express-ts"
+    "docker-run": "docker run -p 3001:3001 qwetter-api-users"
   },
   "keywords": [],
   "author": "",
