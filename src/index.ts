@@ -5,12 +5,7 @@ import UserController from './controllers/UserController';
 dotenv.config();
 const port: Number = parseInt(process.env.PORT as string, 10);
 
-const app = new App(
-  [
-    new UserController()
-  ],
-  port
-);
+const app = new App(port);
 
 app.listen();
 

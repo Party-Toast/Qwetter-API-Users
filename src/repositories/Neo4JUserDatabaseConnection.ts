@@ -9,8 +9,8 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
 
     constructor() {
         this.driver = neo4j.driver(
-            process.env.NEO4J_URI,
-            neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD)
+            "neo4j+s://4378796f.databases.neo4j.io",
+            neo4j.auth.basic("neo4j", "EYCavfA-PKtNfr2jAqIlSgGgPRQARHtcEmytcEj3gLk")
         )
         this.session = this.driver.session();
     }
