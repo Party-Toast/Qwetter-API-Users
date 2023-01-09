@@ -107,6 +107,8 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
     }
 
     public follow = async (followRequest: FollowRequest): Promise<User | undefined> => {
+        // TODO: do not allow users to follow themselves
+        
         // Check if the follower is already following the followee
         let followers = await this.getFollowing(followRequest.followerUuid).then((users: User[]) => {
             return users;
