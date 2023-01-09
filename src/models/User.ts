@@ -10,6 +10,7 @@ export interface User {
 }
 
 export interface UserCreationRequest {
+    uuid: string;
     username: string;
     firstName: string;
     lastName: string;
@@ -20,7 +21,6 @@ export interface UserCreationRequest {
 }
 
 export interface UserUpdateRequest {
-    username: string;
     firstName: string;
     lastName: string;
     avatar: string;

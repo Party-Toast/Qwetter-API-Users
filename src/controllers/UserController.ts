@@ -48,8 +48,12 @@ export default class UserController {
     public createUser = async (request: Request, response: Response) => {
         const userCreationRequest: UserCreationRequest = request.body;
         this.userService.createUser(userCreationRequest).then((user) => {
-            // TODO: catch responses for duplicate username/email registration
-            response.status(201).send(user);
+            if(user === undefined) {
+                response.status(400).send(`User with UUID ${userCreationRequest.uuid} already exists.`);
+            }
+            else {
+                response.status(201).send(user);
+            }
         });
     }
 

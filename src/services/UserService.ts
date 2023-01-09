@@ -17,7 +17,7 @@ export default class UserService {
         return this.databaseConnection.getUserById(uuid);
     };
 
-    public createUser = async (user: UserCreationRequest): Promise<User> => {
+    public createUser = async (user: UserCreationRequest): Promise<User | undefined> => {
         return this.databaseConnection.createUser(user);
     };  
 

@@ -88,7 +88,6 @@ export default class MySQLUserDatabaseConnection implements IDatabaseConnection 
         users[index].firstName = user.firstName;
         users[index].lastName = user.lastName;
         users[index].location = user.location;
-        users[index].username = user.username;
         users[index].website = user.website;
     
         return users[index];
