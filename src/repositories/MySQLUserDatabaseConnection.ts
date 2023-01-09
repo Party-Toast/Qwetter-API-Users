@@ -1,6 +1,7 @@
 import { User, UserCreationRequest, UserUpdateRequest } from "../models/User";
 import IDatabaseConnection from "./IUserDatabaseConnection";
 import mysql from 'mysql';
+import { FollowRequest, UnfollowRequest } from "../models/Follow";
 
 const users: Array<User> = [
     {
@@ -101,5 +102,17 @@ export default class MySQLUserDatabaseConnection implements IDatabaseConnection 
         const user = users[index];
         users.splice(index, 1);
         return user;    
+    }
+
+    public getFollowing(uuid: string): Promise<User[]> {
+        throw new Error("Method not implemented.");
+    }
+
+    public follow = async (followRequest: FollowRequest): Promise<User | undefined> => {
+        throw new Error("Method not implemented.");
+    }
+
+    public unfollow = async (unfollowRequest: UnfollowRequest): Promise<User | undefined> => {
+        throw new Error("Method not implemented.");
     }
 }

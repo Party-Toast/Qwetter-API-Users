@@ -5,6 +5,9 @@ import UserService from '../services/UserService';
 import SchemaValidator from '../utils/SchemaValidator';
 import UserCreationRequestSchema from '../schemas/UserCreationRequestSchema';
 import UserUpdateRequestSchema from '../schemas/UserUpdateRequestSchema';
+import FollowRequestSchema from '../schemas/FollowRequestSchema';
+import UnfollowRequestSchema from '../schemas/UnfollowRequestSchema';
+import { FollowRequest, UnfollowRequest } from '../models/Follow';
 
 export default class UserController {
     public path = '/users';
@@ -13,6 +16,8 @@ export default class UserController {
     public validator = new SchemaValidator();
     public userCreationRequestSchema: JSONSchemaType<UserCreationRequest> = UserCreationRequestSchema;
     public userUpdateRequestSchema: JSONSchemaType<UserUpdateRequest> = UserUpdateRequestSchema;
+    public followRequestSchema: JSONSchemaType<FollowRequest> = FollowRequestSchema;
+    public unfollowRequestSchema: JSONSchemaType<UnfollowRequest> = UnfollowRequestSchema;
 
     constructor() {
         this.intializeRoutes();
@@ -25,6 +30,9 @@ export default class UserController {
         this.router.post(this.path, this.validator.validateBody(this.userCreationRequestSchema), this.createUser);
         this.router.put(`${this.path}/:uuid`, this.validator.validateBody(this.userUpdateRequestSchema), this.updateUser);
         this.router.delete(`${this.path}/:uuid`, this.deleteUser);
+        this.router.get(`${this.path}/following/:uuid`, this.getFollowing);
+        this.router.post(`${this.path}/follow`, this.validator.validateBody(this.followRequestSchema), this.follow);
+        this.router.post(`${this.path}/unfollow`, this.validator.validateBody(this.unfollowRequestSchema), this.unfollow);
     }
     
     // GET
@@ -79,4 +87,36 @@ export default class UserController {
             response.send(user);
         })
     }
+
+    // Get following
+    public getFollowing = async (request: Request, response: Response) => {
+        const uuid: string = request.params.uuid;
+        this.userService.getFollowing(uuid).then((users) => {
+            response.send(users);
+        })
+    }
+
+
+    // Follow
+    public follow = async (request: Request, response: Response) => {
+        const followRequest: FollowRequest = request.body;
+        this.userService.follow(followRequest).then((user) => {
+            if(user === undefined) {
+                response.status(404).send(`User with UUID ${followRequest.followerUuid} is already following ${followRequest.followeeUuid}.`);
+            }
+            response.send(user);
+        });
+    }
+
+    // Unfollow
+    public unfollow = async (request: Request, response: Response) => {
+        const unfollowRequest: UnfollowRequest = request.body;
+        this.userService.unfollow(unfollowRequest).then((user) => {
+            if(user === undefined) {
+                response.status(404).send(`User with UUID ${unfollowRequest.followerUuid} is not following ${unfollowRequest.followeeUuid} yet.`);
+            }
+            response.send(user);
+        })
+    }
+
 }

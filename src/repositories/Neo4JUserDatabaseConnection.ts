@@ -1,3 +1,4 @@
+import { FollowRequest, UnfollowRequest } from "../models/Follow";
 import { User, UserCreationRequest, UserUpdateRequest } from "../models/User";
 import IDatabaseConnection from "./IUserDatabaseConnection";
 var neo4j = require('neo4j-driver');
@@ -9,7 +10,7 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
     constructor() {
         this.driver = neo4j.driver(
             process.env.NEO4J_URI,
-            neo4j.auth.basic('neo4j', process.env.NEO4J_PASSWORD)
+            neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD)
         )
         this.session = this.driver.session();
     }
@@ -19,8 +20,8 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
         let user: User = {
             uuid: properties.uuid ?? null,
             username: properties.username ?? null,
-            firstName: properties.firstname ?? null,
-            lastName: properties.lastname ?? null,
+            firstName: properties.firstName ?? null,
+            lastName: properties.lastName ?? null,
             avatar: properties.avatar ?? null,
             bio: properties.bio ?? null,
             location: properties.location ?? null,
@@ -55,7 +56,7 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
         if(await this.getUserById(user.uuid) != undefined) {
             return undefined;
         }
-        return await this.session.run(`CREATE (user:User {uuid: '${user.uuid}', username: '${user.username}', firstName: '${user.firstName}', lastName: '${user.lastName}', avatar: '${user.avatar}', bio: '${user.bio}', location: '${user.lastName}', website: '${user.website}'}) RETURN user`).then((response: any) => {
+        return await this.session.run(`CREATE (user:User {uuid: '${user.uuid}', username: '${user.username}', firstName: '${user.firstName}', lastName: '${user.lastName}', avatar: '${user.avatar}', bio: '${user.bio}', location: '${user.location}', website: '${user.website}'}) RETURN user`).then((response: any) => {
             let record = response.records[0];
             let newUser = this.createUserFromRecord(record);
             return newUser;
@@ -92,5 +93,44 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
             }
             return undefined;
         });
+    }
+
+    public getFollowing = async (uuid: string): Promise<User[]> => {
+        let followers: User[] = [];
+        await this.session.run(`MATCH (follower:User)-[:FOLLOWS]->(following) WHERE follower.uuid = '${uuid}' RETURN following AS user`).then((response: any) => {
+            response.records.forEach((record: any) => {
+                let follower = this.createUserFromRecord(record);
+                followers.push(follower);
+            });
+        });
+        return followers;
+    }
+
+    public follow = async (followRequest: FollowRequest): Promise<User | undefined> => {
+        // Check if the follower is already following the followee
+        let followers = await this.getFollowing(followRequest.followerUuid).then((users: User[]) => {
+            return users;
+        });
+
+        if(followers.find((user: User) => user.uuid == followRequest.followeeUuid) != undefined) {
+            return undefined;
+        }
+
+        return await this.session.run(`MATCH(follower:User) WHERE follower.uuid = '${followRequest.followerUuid}' MATCH(followee:User) WHERE followee.uuid = '${followRequest.followeeUuid}' CREATE(follower)-[:FOLLOWS {date: '${followRequest.date}'}]->(followee) RETURN followee AS user`).then((response: any) => {
+            let record = response.records[0];
+            let user = this.createUserFromRecord(record);
+            return user;
+        });        
+    }
+
+    public unfollow = async (unfollowRequest: UnfollowRequest): Promise<User | undefined> => {
+        return await this.session.run(`MATCH(follower:User) WHERE follower.uuid = '${unfollowRequest.followerUuid}' MATCH(followee:User) WHERE followee.uuid = '${unfollowRequest.followeeUuid}' MATCH (follower)-[relation:FOLLOWS]->(followee) DELETE relation RETURN followee AS user`).then((response: any) => {
+            let record = response.records[0];
+            if (record) {
+                let user = this.createUserFromRecord(record);
+                return user;
+            }
+            return undefined;
+        });        
     }
 }
