@@ -1,7 +1,7 @@
 import { FollowRequest, UnfollowRequest } from "../models/Follow";
 import { User, UserCreationRequest, UserUpdateRequest } from "../models/User";
 import IDatabaseConnection from "./IUserDatabaseConnection";
-var neo4j = require('neo4j-driver');
+const neo4j = require('neo4j-driver');
 
 export default class Neo4JUserDatabaseConnection implements IDatabaseConnection {
     private driver;
@@ -9,8 +9,10 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
 
     constructor() {
         this.driver = neo4j.driver(
-            "neo4j+s://4378796f.databases.neo4j.io",
-            neo4j.auth.basic("neo4j", "EYCavfA-PKtNfr2jAqIlSgGgPRQARHtcEmytcEj3gLk")
+            process.env.NEO4J_URI,
+            neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD)
+            // "neo4j+s://4378796f.databases.neo4j.io",
+            // neo4j.auth.basic("neo4j", "EYCavfA-PKtNfr2jAqIlSgGgPRQARHtcEmytcEj3gLk")
         )
         this.session = this.driver.session();
     }
