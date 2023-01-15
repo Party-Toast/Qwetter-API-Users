@@ -46,7 +46,9 @@ export default class UserService {
     };
 
     public follow = async (followRequest: FollowRequest): Promise<User | undefined> => {
-        return this.databaseConnection.follow(followRequest);
+        const followedUserPromise = this.databaseConnection.follow(followRequest);
+        this.eventBroker.followEvent(followedUserPromise, followRequest);
+        return followedUserPromise;
     };
 
     public unfollow = async (unfollowRequest: UnfollowRequest): Promise<User | undefined> => {

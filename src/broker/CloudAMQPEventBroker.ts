@@ -1,5 +1,5 @@
 import client from 'amqplib';
-import { UnfollowRequest } from '../models/Follow';
+import { FollowRequest, UnfollowRequest } from '../models/Follow';
 import { Message, MessageAndUserUUIDs } from '../models/Message';
 import { User } from '../models/User';
 
@@ -47,12 +47,12 @@ export default class CloudAMQPEventBroker {
         const users = await this.databaseConnection.getFollowers(message.user_uuid);
 
         if(users !== undefined) {
-            const MessageAndUserUUIDs: MessageAndUserUUIDs = {
+            const messageAndUserUUIDs: MessageAndUserUUIDs = {
                 message: message,
                 user_uuids: users.map((user: User) => user.uuid)
             }
 
-            const serializedMessageAndUserUUIDs = JSON.stringify(MessageAndUserUUIDs);
+            const serializedMessageAndUserUUIDs = JSON.stringify(messageAndUserUUIDs);
             channel.publish(exchange, 'message.created', Buffer.from(serializedMessageAndUserUUIDs));
         }
     }
@@ -68,6 +68,18 @@ export default class CloudAMQPEventBroker {
             channel.publish(exchange, 'user.created', Buffer.from(serializedUser));
         }
     }    
+
+    public followEvent = async (followedUserPromise: Promise<User | undefined>, followRequest: FollowRequest) => {
+        const exchange = 'users';
+        const channel = await this.getChannel(exchange);
+
+        const user = await followedUserPromise;
+
+        if(user !== undefined) {
+            const serializedFollowRequest = JSON.stringify(followRequest);
+            channel.publish(exchange, 'user.followed', Buffer.from(serializedFollowRequest));
+        }
+    }
 
     public unfollowEvent = async (unfollowedUserPromise: Promise<User | undefined>, unfollowRequest: UnfollowRequest) => {
         const exchange = 'users';
