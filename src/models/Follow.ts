@@ -1,16 +1,16 @@
 export interface Follow {
-    followerUuid: string;
-    followeeUuid: string;
+    follower_uuid: string;
+    followee_uuid: string;
     date: string;
 }
 
 export interface FollowRequest {
-    followerUuid: string;
-    followeeUuid: string;
+    follower_uuid: string;
+    followee_uuid: string;
     date: string
 }
 
 export interface UnfollowRequest {
-    followerUuid: string;
-    followeeUuid: string;
+    follower_uuid: string;
+    followee_uuid: string;
 }

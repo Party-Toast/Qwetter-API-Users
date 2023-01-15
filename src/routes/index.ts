@@ -85,11 +85,23 @@ router.get(`${PATH}/following/:uuid`, async(request: Request, response: Response
     });
 });
 
+router.get(`${PATH}/followers/:uuid`, async(request: Request, response: Response) => {
+    const uuid: string = request.params.uuid;
+    userController.getFollowers(uuid).then((users) => {
+        if(users === undefined) {
+            response.status(404).send(`No user with uuid ${uuid} was found.`);
+        }
+        else {
+            response.send(users);
+        }
+    });
+});
+
 router.post(`${PATH}/follow`, validator.validateBody(followRequestSchema), async(request: Request, response: Response) => {
     const followRequest: FollowRequest = request.body;
     userController.follow(followRequest).then((user) => {
         if(user === undefined) {
-            response.status(404).send(`No user with uuid ${followRequest.followerUuid} was found.`);
+            response.status(404).send(`No user with uuid ${followRequest.follower_uuid} was found.`);
         }
         else {
             response.send(user);
@@ -101,7 +113,7 @@ router.post(`${PATH}/unfollow`, validator.validateBody(unfollowRequestSchema), a
     const unfollowRequest: UnfollowRequest = request.body;
     userController.unfollow(unfollowRequest).then((user) => {
         if(user === undefined) {
-            response.status(404).send(`No user with uuid ${unfollowRequest.followerUuid} was found.`);
+            response.status(404).send(`No user with uuid ${unfollowRequest.follower_uuid} was found.`);
         }
         else {
             response.send(user);

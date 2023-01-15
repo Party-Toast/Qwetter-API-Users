@@ -97,9 +97,20 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
         });
     }
 
-    public getFollowing = async (uuid: string): Promise<User[]> => {
-        let followers: User[] = [];
+    public getFollowing = async (uuid: string): Promise<Array<User> | undefined> => {
+        let following: User[] = [];
         await this.session.run(`MATCH (follower:User)-[:FOLLOWS]->(following) WHERE follower.uuid = '${uuid}' RETURN following AS user`).then((response: any) => {
+            response.records.forEach((record: any) => {
+                let follower = this.createUserFromRecord(record);
+                following.push(follower);
+            });
+        });
+        return following;
+    }
+
+    public getFollowers = async (uuid: string): Promise<Array<User> | undefined> => {
+        let followers: User[] = [];
+        await this.session.run(`MATCH (followers)-[:FOLLOWS]->(following:User) WHERE following.uuid = '${uuid}' RETURN followers AS user`).then((response: any) => {
             response.records.forEach((record: any) => {
                 let follower = this.createUserFromRecord(record);
                 followers.push(follower);
@@ -112,15 +123,15 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
         // TODO: do not allow users to follow themselves
         
         // Check if the follower is already following the followee
-        let followers = await this.getFollowing(followRequest.followerUuid).then((users: User[]) => {
+        let followers = await this.getFollowing(followRequest.follower_uuid).then((users) => {
             return users;
         });
 
-        if(followers.find((user: User) => user.uuid == followRequest.followeeUuid) != undefined) {
+        if(followers === undefined || followers.find((user: User) => user.uuid == followRequest.followee_uuid) != undefined) {
             return undefined;
         }
 
-        return await this.session.run(`MATCH(follower:User) WHERE follower.uuid = '${followRequest.followerUuid}' MATCH(followee:User) WHERE followee.uuid = '${followRequest.followeeUuid}' CREATE(follower)-[:FOLLOWS {date: '${followRequest.date}'}]->(followee) RETURN followee AS user`).then((response: any) => {
+        return await this.session.run(`MATCH(follower:User) WHERE follower.uuid = '${followRequest.follower_uuid}' MATCH(followee:User) WHERE followee.uuid = '${followRequest.followee_uuid}' CREATE(follower)-[:FOLLOWS {date: '${followRequest.date}'}]->(followee) RETURN followee AS user`).then((response: any) => {
             let record = response.records[0];
             let user = this.createUserFromRecord(record);
             return user;
@@ -128,7 +139,7 @@ export default class Neo4JUserDatabaseConnection implements IDatabaseConnection 
     }
 
     public unfollow = async (unfollowRequest: UnfollowRequest): Promise<User | undefined> => {
-        return await this.session.run(`MATCH(follower:User) WHERE follower.uuid = '${unfollowRequest.followerUuid}' MATCH(followee:User) WHERE followee.uuid = '${unfollowRequest.followeeUuid}' MATCH (follower)-[relation:FOLLOWS]->(followee) DELETE relation RETURN followee AS user`).then((response: any) => {
+        return await this.session.run(`MATCH(follower:User) WHERE follower.uuid = '${unfollowRequest.follower_uuid}' MATCH(followee:User) WHERE followee.uuid = '${unfollowRequest.followee_uuid}' MATCH (follower)-[relation:FOLLOWS]->(followee) DELETE relation RETURN followee AS user`).then((response: any) => {
             let record = response.records[0];
             if (record) {
                 let user = this.createUserFromRecord(record);

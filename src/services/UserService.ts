@@ -2,16 +2,21 @@ import MySQLUserDatabaseConnection from "../repositories/MySQLUserDatabaseConnec
 import Neo4JUserDatabaseConnection from "../repositories/Neo4JUserDatabaseConnection";
 import { User, UserCreationRequest, UserUpdateRequest } from "../models/User";
 import { FollowRequest, UnfollowRequest } from "../models/Follow";
+import CloudAMQPEventBroker from "../broker/CloudAMQPEventBroker";
 
 export default class UserService {
-    public databaseConnection;
+    private databaseConnection;
+    private eventBroker;
 
     constructor() {
         this.databaseConnection = new Neo4JUserDatabaseConnection();
+        this.eventBroker = new CloudAMQPEventBroker(this.databaseConnection);
+        this.eventBroker.connect();
     }
 
     public getAllUsers = async (): Promise<Array<User>> => {
         return this.databaseConnection.getAllUsers();
+
     };
     
     public getUserById = async (uuid: string): Promise<User | undefined> => {
@@ -19,7 +24,9 @@ export default class UserService {
     };
 
     public createUser = async (user: UserCreationRequest): Promise<User | undefined> => {
-        return this.databaseConnection.createUser(user);
+        const createdUserPromise = this.databaseConnection.createUser(user);
+        this.eventBroker.createdUserEvent(createdUserPromise);
+        return createdUserPromise;
     };  
 
     public updateUser = async (uuid: string, user: UserUpdateRequest): Promise<User | undefined> => { 
@@ -30,8 +37,12 @@ export default class UserService {
         return this.databaseConnection.deleteUser(uuid);  
     };
 
-    public getFollowing = async (uuid: string): Promise<Array<User>> => {
+    public getFollowing = async (uuid: string): Promise<Array<User> | undefined> => {
         return this.databaseConnection.getFollowing(uuid);
+    };
+
+    public getFollowers = async (uuid: string): Promise<Array<User> | undefined> => {
+        return this.databaseConnection.getFollowers(uuid);
     };
 
     public follow = async (followRequest: FollowRequest): Promise<User | undefined> => {
@@ -39,6 +50,8 @@ export default class UserService {
     };
 
     public unfollow = async (unfollowRequest: UnfollowRequest): Promise<User | undefined> => {
-        return this.databaseConnection.unfollow(unfollowRequest);
+        const unfollowedUserPromise = this.databaseConnection.unfollow(unfollowRequest);
+        this.eventBroker.unfollowEvent(unfollowedUserPromise, unfollowRequest);
+        return unfollowedUserPromise;
     }
 }

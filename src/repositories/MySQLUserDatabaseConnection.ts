@@ -108,6 +108,10 @@ export default class MySQLUserDatabaseConnection implements IDatabaseConnection 
         throw new Error("Method not implemented.");
     }
 
+    public getFollowers(uuid: string): Promise<User[]> {
+        throw new Error("Method not implemented.");
+    }
+
     public follow = async (followRequest: FollowRequest): Promise<User | undefined> => {
         throw new Error("Method not implemented.");
     }

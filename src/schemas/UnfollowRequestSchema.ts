@@ -1,16 +1,16 @@
 const schema = {
     "type": "object",
     "properties": {
-        "followerUuid": {
+        "follower_uuid": {
             "type": "string"
         },
-        "followeeUuid": {
+        "followee_uuid": {
             "type": "string"
         }
     },
     "required": [
-        "followeeUuid",
-        "followerUuid"
+        "followee_uuid",
+        "follower_uuid"
     ]
 } as const;
 export default schema;

@@ -45,11 +45,18 @@ export default class UserController {
         return await this.userService.deleteUser(uuid);
     }
 
-    @Get("/:uuid/following")
+    @Get("/following/:uuid")
     public async getFollowing(
         @Path() uuid: string
-    ): Promise<Array<User>> {
+    ): Promise<Array<User> | undefined> {
         return await this.userService.getFollowing(uuid);
+    }
+
+    @Get("/followers/:uuid")
+    public async getFollowers(
+        @Path() uuid: string
+    ): Promise<Array<User> | undefined> {
+        return await this.userService.getFollowers(uuid);
     }
 
     @Post("/follow")
